@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Class Store – Products</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  <div id="header-placeholder"></div>
+  <main class="container">
+    <div class="products-header">
+      <h1>All Products</h1>
+      <div class="filters-bar">
+        <input type="text" id="searchInput" placeholder="Search products..." class="search-input">
+        <select id="categoryFilter" class="filter-select">
+          <option value="all">All Categories</option>
+        </select>
+        <select id="sortSelect" class="filter-select">
+          <option value="default">Sort by: Default</option>
+          <option value="priceLowHigh">Price: Low to High</option>
+          <option value="priceHighLow">Price: High to Low</option>
+          <option value="nameAZ">Name: A-Z</option>
+        </select>
+      </div>
+    </div>
+    <div class="products-grid" id="productsGrid"></div>
+  </main>
+  <div id="footer-placeholder"></div>
+
+  <div class="floating-cart-btn" id="floatingCartBtn"><i class="fas fa-shopping-cart"></i><span class="cart-count-badge" id="cartCountBadge">0</span></div>
+  <a href="https://wa.me/2348012345678" class="floating-wa-btn" target="_blank"><i class="fab fa-whatsapp"></i></a>
+  <div class="cart-sidebar" id="cartSidebar"><div class="cart-header"><h3>Your Cart</h3><button class="close-cart" id="closeCartBtn">&times;</button></div><div class="cart-items" id="cartItemsContainer"></div><div class="cart-footer"><div class="cart-total">Total: <span id="cartTotalAmount">₦0</span></div><button class="btn btn-primary checkout-wa-btn" id="checkoutWhatsAppBtn">Checkout on WhatsApp</button></div></div>
+  <div class="cart-overlay" id="cartOverlay"></div>
+
+  <script src="cart.js"></script>
+  <script src="script.js"></script>
+  <script>
+    let allProducts = [];
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadHeaderFooter();
+      const res = await fetch('products.json');
+      allProducts = await res.json();
+      populateCategoryFilter(allProducts);
+      const urlParams = new URLSearchParams(window.location.search);
+      const catParam = urlParams.get('category');
+      if(catParam) document.getElementById('categoryFilter').value = catParam;
+      filterAndRender();
+      document.getElementById('searchInput').addEventListener('input', filterAndRender);
+      document.getElementById('categoryFilter').addEventListener('change', filterAndRender);
+      document.getElementById('sortSelect').addEventListener('change', filterAndRender);
+      initCartEvents();
+    });
+    function populateCategoryFilter(products){
+      const cats = [...new Set(products.map(p=>p.category))];
+      const select = document.getElementById('categoryFilter');
+      cats.forEach(c=>{ const opt = document.createElement('option'); opt.value=c; opt.textContent=c; select.appendChild(opt); });
+    }
+    function filterAndRender(){
+      let filtered = [...allProducts];
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      const category = document.getElementById('categoryFilter').value;
+      if(searchTerm) filtered = filtered.filter(p=>p.name.toLowerCase().includes(searchTerm) || p.description.toLowerCase().includes(searchTerm));
+      if(category !== 'all') filtered = filtered.filter(p=>p.category === category);
+      const sort = document.getElementById('sortSelect').value;
+      if(sort === 'priceLowHigh') filtered.sort((a,b)=>a.price-b.price);
+      if(sort === 'priceHighLow') filtered.sort((a,b)=>b.price-a.price);
+      if(sort === 'nameAZ') filtered.sort((a,b)=>a.name.localeCompare(b.name));
+      renderProductsGrid(filtered);
+    }
+    function renderProductsGrid(products){
+      const grid = document.getElementById('productsGrid');
+      grid.innerHTML = products.map(p=>`<div class="product-card"><img src="${p.image}" alt="${p.name}"><div class="product-info"><h4>${p.name}</h4><p class="category-tag">${p.category}</p><p class="price">₦${p.price.toLocaleString()}</p><div class="card-actions"><button class="btn-add-cart" data-id="${p.id}" data-name="${p.name}" data-price="${p.price}" data-img="${p.image}">Add to Cart</button><a href="product.html?id=${p.id}" class="btn-view">View</a></div></div></div>`).join('');
+      attachCartButtonListeners();
+    }
+  </script>
+</body>
+</html>

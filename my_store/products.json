@@ -1,0 +1,10 @@
+[
+  { "id": "p1", "name": "Classic Denim Jacket", "category": "Fashion", "price": 15900, "image": "https://placehold.co/400x400?text=Denim+Jacket", "description": "Timeless denim jacket, perfect for any casual look.", "isNewArrival": true, "isFeatured": true },
+  { "id": "p2", "name": "Air Zoom Sneakers", "category": "Shoes", "price": 24500, "image": "https://placehold.co/400x400?text=Sneakers", "description": "Comfortable and stylish running sneakers.", "isNewArrival": true, "isFeatured": false },
+  { "id": "p3", "name": "Wireless Earbuds", "category": "Electronics", "price": 8900, "image": "https://placehold.co/400x400?text=Earbuds", "description": "Bluetooth 5.3, long battery life, crisp sound.", "isNewArrival": false, "isFeatured": true },
+  { "id": "p4", "name": "Smart Blender", "category": "Home Appliances", "price": 32500, "image": "images/2.jpg", "description": "Multi-speed blender with 1.5L jug.", "isNewArrival": true, "isFeatured": false },
+  { "id": "p5", "name": "Leather Belt", "category": "Accessories", "price": 4500, "image": "https://placehold.co/400x400?text=Belt", "description": "Genuine leather, adjustable fit.", "isNewArrival": false, "isFeatured": true },
+  { "id": "p6", "name": "Yoga Mat", "category": "Lifestyle", "price": 7500, "image": "https://placehold.co/400x400?text=Yoga+Mat", "description": "Eco-friendly non-slip mat.", "isNewArrival": true, "isFeatured": false },
+  { "id": "p7", "name": "Smart Watch", "category": "Electronics", "price": 18900, "image": "https://placehold.co/400x400?text=SmartWatch", "description": "Heart rate, notifications, fitness tracker.", "isNewArrival": false, "isFeatured": true },
+  { "id": "p8", "name": "Cotton T-Shirt", "category": "Fashion", "price": 3500, "image": "https://placehold.co/400x400?text=TShirt", "description": "Breathable 100% cotton.", "isNewArrival": true, "isFeatured": false }
+]

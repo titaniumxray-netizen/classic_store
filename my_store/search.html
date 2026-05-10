@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search Results – Class Store</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  <div id="header-placeholder"></div>
+  <main class="container">
+    <h1>Search Results</h1>
+    <p id="searchQueryInfo"></p>
+    <div class="products-grid" id="searchResultsGrid"></div>
+    <div id="noResultsMsg" style="display:none; text-align:center; padding:2rem;">No products found. Try another keyword.</div>
+  </main>
+  <div id="footer-placeholder"></div>
+
+  <!-- Floating buttons -->
+  <div class="floating-cart-btn" id="floatingCartBtn"><i class="fas fa-shopping-cart"></i><span class="cart-count-badge" id="cartCountBadge">0</span></div>
+  <a href="https://wa.me/2348012345678" class="floating-wa-btn" target="_blank"><i class="fab fa-whatsapp"></i></a>
+  
+  <!-- Cart Sidebar -->
+  <div class="cart-sidebar" id="cartSidebar">
+    <div class="cart-header"><h3>Your Cart</h3><button class="close-cart" id="closeCartBtn">&times;</button></div>
+    <div class="cart-items" id="cartItemsContainer"></div>
+    <div class="cart-footer"><div class="cart-total">Total: <span id="cartTotalAmount">₦0</span></div><button class="btn btn-primary checkout-wa-btn" id="checkoutWhatsAppBtn">Checkout on WhatsApp</button></div>
+  </div>
+  <div class="cart-overlay" id="cartOverlay"></div>
+
+  <script src="cart.js"></script>
+  <script src="script.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadHeaderFooter();
+      const res = await fetch('products.json');
+      const products = await res.json();
+      const params = new URLSearchParams(location.search);
+      const q = params.get('q') || '';
+      document.getElementById('searchQueryInfo').innerHTML = `Showing results for "<strong>${escapeHtml(q)}</strong>"`;
+      if (!q.trim()) return;
+      const filtered = products.filter(p => 
+        p.name.toLowerCase().includes(q.toLowerCase()) || 
+        (p.description && p.description.toLowerCase().includes(q.toLowerCase())) ||
+        p.category.toLowerCase().includes(q.toLowerCase())
+      );
+      const grid = document.getElementById('searchResultsGrid');
+      if (filtered.length === 0) {
+        document.getElementById('noResultsMsg').style.display = 'block';
+        grid.style.display = 'none';
+      } else {
+        document.getElementById('noResultsMsg').style.display = 'none';
+        grid.style.display = 'grid';
+        grid.innerHTML = filtered.map(p => `
+          <div class="product-card">
+            <img src="${p.image}" alt="${p.name}">
+            <div class="product-info">
+              <h4>${p.name}</h4>
+              <p class="category-tag">${p.category}</p>
+              <p class="price">₦${p.price.toLocaleString()}</p>
+              <div class="card-actions">
+                <button class="btn-add-cart" data-id="${p.id}" data-name="${p.name}" data-price="${p.price}" data-img="${p.image}">Add to Cart</button>
+                <a href="product.html?id=${p.id}" class="btn-view">View</a>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      }
+      if (typeof attachCartButtonListeners === 'function') attachCartButtonListeners();
+      if (typeof initCartEvents === 'function') initCartEvents();
+    });
+    function escapeHtml(str) {
+      return str.replace(/[&<>]/g, function(m) {
+        return m === '&' ? '&amp;' : (m === '<' ? '&lt;' : '&gt;');
+      });
+    }
+  </script>
+</body>
+</html>
